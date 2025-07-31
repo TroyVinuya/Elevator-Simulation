@@ -341,21 +341,23 @@ class AnalyticsWindow:
         stats = []
         for entity, times in wait_times_by_entity.items():
             if times:
+                arr = np.asarray(times)                       # ①
                 stats.append([
                     entity.capitalize(),
-                    len(times),
-                    f"{np.mean(times):.2f}",
-                    f"{np.std(times):.2f}",
-                    f"{np.min(times):.2f}",
-                    f"{np.max(times):.2f}"
+                    len(arr),
+                    f"{arr.mean():.2f}",
+                    f"{arr.std(ddof=1):.2f}",
+                    f"{np.percentile(arr, 95):.2f}",          # ▼ NEW: 95-pct
+                    f"{arr.min():.2f}",
+                    f"{arr.max():.2f}"
                 ])
         if stats:
             table = ax4.table(
-                cellText=stats,
-                colLabels=["Entity", "Count", "Mean", "Std Dev", "Min", "Max"],
-                cellLoc="center",
-                loc="center"
-            )
+                    cellText=stats,
+                    colLabels=["Entity", "Count", "Mean", "Std Dev", "95-pct", "Min", "Max"],
+                    cellLoc="center",
+                    loc="center"
+                )
             table.auto_set_font_size(False)
             table.set_fontsize(10)
             table.scale(1, 1.5)
